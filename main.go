@@ -75,6 +75,13 @@ func main() {
 			Action:  cmdAdd,
 		},
 		{
+			Name:      "edit",
+			Aliases:   []string{"e"},
+			Usage:     "edit a task",
+			ArgsUsage: "edit [no]",
+			Action:    cmdEdit,
+		},
+		{
 			Name:      "done",
 			Aliases:   []string{"d"},
 			Usage:     "done a task",
@@ -192,6 +199,63 @@ func cmdAdd(c *cli.Context) error {
 		log.Fatalf("failed to add: %v", err)
 	}
 	fmt.Println(fmt.Sprintf("\nadded %s", name))
+
+	return nil
+}
+
+func cmdEdit(c *cli.Context) error {
+	if !c.Args().Present() {
+		cli.ShowCommandHelp(c, "edit")
+		return nil
+	}
+
+	path := dbPath()
+	if !fileExists(path) {
+		return errors.New("exec init first")
+	}
+	db, err := sql.Open("sqlite3", path)
+	if err != nil {
+		log.Fatalf("cannot open database: %v", err)
+	}
+	defer db.Close()
+
+	var name, discription string
+
+	id := c.Args().First()
+	fmt.Print("Subject: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	if !scanner.Scan() {
+		return errors.New("canceled")
+	}
+	if scanner.Err() != nil {
+		return scanner.Err()
+	}
+	name = scanner.Text()
+	fmt.Print("Discription: ")
+	if !scanner.Scan() {
+		return errors.New("canceled")
+	}
+	if scanner.Err() != nil {
+		return scanner.Err()
+	}
+	discription = scanner.Text()
+
+	now := timeToStr(time.Now())
+	exists, err := subjectExists(id, now)
+	if err != nil {
+		log.Fatalf("query failed: %v", err)
+	}
+	if !exists {
+		fmt.Println(fmt.Sprintf("\nno.%s is not found", id))
+		os.Exit(1)
+	}
+
+	stmt := "UPDATE subjects SET name = ?, discription = ? WHERE id = ? AND date = ?;"
+	_, err = db.Exec(stmt, name, discription, id, now)
+	if err != nil {
+		log.Fatalf("failed to edit: %v", err)
+	}
+	fmt.Println(fmt.Sprintf("\nedited no.%s", id))
 
 	return nil
 }
@@ -348,6 +412,20 @@ func evaluateProgress(all, numOfDone int) string {
 
 func timeToStr(t time.Time) string {
 	return t.Format(layout)
+}
+
+func subjectExists(id, date string) (bool, error) {
+	db, err := sql.Open("sqlite3", dbPath())
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+	stmt := fmt.Sprintf("SELECT EXISTS(SELECT * FROM %s WHERE id = '%s' AND date = '%s');", tblSubjects, id, date)
+	var n int
+	if err := db.QueryRow(stmt).Scan(&n); err != nil {
+		return false, err
+	}
+	return n == 1, nil
 }
 
 func findByDate(d string) ([]Subjects, error) {
