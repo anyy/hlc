@@ -78,14 +78,14 @@ func main() {
 			Name:      "edit",
 			Aliases:   []string{"e"},
 			Usage:     "edit a task",
-			ArgsUsage: "edit [no]",
+			ArgsUsage: "[no]",
 			Action:    cmdEdit,
 		},
 		{
 			Name:      "done",
 			Aliases:   []string{"d"},
 			Usage:     "done a task",
-			ArgsUsage: "done [no]",
+			ArgsUsage: "[no]",
 			Action:    cmdDone,
 		},
 		{
