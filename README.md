@@ -4,7 +4,7 @@ Record your happy learning life for you
 ## Usage
 ```
 NAME:
-   hlc - record happy learning life
+   hlc - record your happy learning life for you
 
 USAGE:
    hlc [global options] command [command options] [arguments...]
@@ -16,6 +16,7 @@ COMMANDS:
    init     init database
    list, l  show tasks today
    add, a   add a task you learn today
+   edit, e  edit a task
    done, d  done a task
    cal, c   show calendar
    help, h  Shows a list of commands or help for one command
@@ -38,6 +39,11 @@ $ hlc list
 done the task
 ```
 $ hlc done [number]
+```
+
+edit the task
+```
+$ hlc edit [number]
 ```
 
 show calendar
