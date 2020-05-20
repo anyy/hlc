@@ -53,7 +53,7 @@ type Subjects struct {
 func main() {
 	app := cli.NewApp()
 	app.Name = "hlc"
-	app.Usage = "record happy learning life"
+	app.Usage = "record your happy learning life for you"
 	app.Version = "1.0.0"
 
 	app.Commands = []cli.Command{
