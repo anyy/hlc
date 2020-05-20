@@ -278,12 +278,21 @@ func cmdDone(c *cli.Context) error {
 
 	id := c.Args().First()
 	now := timeToStr(time.Now())
+	exists, err := subjectExists(id, now)
+	if err != nil {
+		log.Fatalf("query failed: %v", err)
+	}
+	if !exists {
+		fmt.Println(fmt.Sprintf("\nno.%s is not found", id))
+		os.Exit(1)
+	}
+
 	stmt := "UPDATE subjects SET is_done = 1 WHERE id = ? AND date = ?"
 	_, err = db.Exec(stmt, id, now)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(fmt.Sprintf("\nno %s has marked as done.\ngood job!", id))
+	fmt.Println(fmt.Sprintf("\nno.%s has marked as done.\ngood job!", id))
 
 	return nil
 }
