@@ -400,9 +400,6 @@ func intToStrWithSpace(n, runeWidth int, isSun bool) string {
 	if n < 10 {
 		s++
 	}
-	// if !isSun && runeWidth >= 4 {
-	// s--
-	// }
 	return strings.Repeat(" ", s) + strconv.Itoa(n)
 }
 
