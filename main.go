@@ -362,8 +362,10 @@ func cmdCal(c *cli.Context) error {
 
 		if day == "" {
 			day = intToStrWithSpace(i, yesterdayRuneWidth, t.Weekday() == time.Sunday)
+			fmt.Print(fmt.Sprintf("%s ", day))
+		} else {
+			fmt.Print(fmt.Sprintf("%s", day))
 		}
-		fmt.Print(fmt.Sprintf("%s ", day))
 		if count <= 0 {
 			count = 6
 			fmt.Println()
@@ -398,9 +400,9 @@ func intToStrWithSpace(n, runeWidth int, isSun bool) string {
 	if n < 10 {
 		s++
 	}
-	if !isSun && runeWidth >= 4 {
-		s--
-	}
+	// if !isSun && runeWidth >= 4 {
+	// s--
+	// }
 	return strings.Repeat(" ", s) + strconv.Itoa(n)
 }
 
